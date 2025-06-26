@@ -1,3 +1,4 @@
+use colored::Colorize;
 use std::env;
 use std::process::ExitCode;
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
@@ -8,7 +9,12 @@ use tokio::task::JoinSet;
 async fn main() -> ExitCode {
     let args: Vec<String> = env::args().collect();
     if args.len() < 3 {
-        eprintln!("A TCP echo server\n\nusage: {} [address] [port]", args[0]);
+        eprintln!(
+            "A TCP echo server\n\n{} {} {}",
+            "Usage:".green().bold(),
+            args[0].cyan().bold(),
+            "[address] [port]".cyan(),
+        );
         return ExitCode::FAILURE;
     }
 
@@ -18,12 +24,22 @@ async fn main() -> ExitCode {
 
     let mut join_set = JoinSet::new();
 
-    println!("echo server: listening on {}:{}\n", args[1], args[2]);
+    println!(
+        "{} {}\n",
+        "[+]".yellow().bold(),
+        format!("Listening on {}:{}", args[1], args[2])
+            .green()
+            .bold(),
+    );
 
     loop {
         tokio::select! {
             Ok((mut stream, addr)) = listener.accept() => {
-                println!("==> connection established: {addr}");
+                println!(
+                    "{} Connection established: {}",
+                    "==>".blue().bold(),
+                    addr,
+                );
 
                 join_set.spawn(async move {
                     let mut buf = vec![0u8; 8192];
@@ -35,13 +51,17 @@ async fn main() -> ExitCode {
                         stream.write_all(&buf[0..n]).await?;
                     }
 
-                    println!("==> connection closed: {addr}");
+                    println!(
+                        "{} Connection closed: {}",
+                        "==>".yellow().bold(),
+                        addr,
+                    );
                     Ok::<_, std::io::Error>(())
                 });
             }
             Some(res) = join_set.join_next() => {
                 if let Err(err) = res {
-                    eprintln!("=!> client task failed: {err}");
+                    eprintln!("{} Client task failed: {err}", "=!>".red().bold());
                 }
             }
         }
