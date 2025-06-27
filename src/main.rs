@@ -7,9 +7,11 @@ use tokio::task::JoinSet;
 
 #[tokio::main(flavor = "current_thread")]
 async fn main() -> ExitCode {
-    let args: Vec<String> = env::args().collect();
-    if args.len() < 3 {
-        eprintln!(
+    let mut args: Vec<String> = env::args().collect();
+    if args.len() == 1 {
+        args.extend_from_slice(&["127.0.0.1".to_owned(), "12345".to_owned()]);
+    } else if args.len() == 2 {
+        println!(
             "A TCP echo server\n\n{} {} {}",
             "Usage:".green().bold(),
             args[0].cyan().bold(),
