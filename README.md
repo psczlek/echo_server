@@ -1,7 +1,7 @@
 # echo_server
 
-A TCP echo server
+A TCP/UDP echo server
 
 ```
-usage: echo_server [address] [port]
+Usage: echo_server [address] [port] Optional([tcp|udp])
 ```

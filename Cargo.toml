@@ -1,9 +1,9 @@
 [package]
 name = "echo_server"
-version = "0.0.1"
-description = "A TCP echo server"
+version = "0.0.2"
+description = "A TCP/UDP echo server"
 edition = "2024"
 
 [dependencies]
-tokio = { version = "1.45.1", features = ["io-util", "net", "macros", "rt"] }
+tokio = { version = "1.45.1", features = ["io-util", "macros", "net", "rt", "signal"] }
 colored = "3.0.0"
